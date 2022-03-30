@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+
+  user-app:
+    image: animebook-user:v1
+    ports:
+      - "3000:3000"
+    depends_on:
+      - post-db
+
+  user-db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: postdb
+    expose:
+      - 5432
