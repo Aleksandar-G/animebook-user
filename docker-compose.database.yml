@@ -1,0 +1,9 @@
+user-db:
+  image: postgres
+  hostname: userdb
+  environment:
+    POSTGRES_PASSWORD: password
+    POSTGRES_USER: user
+    POSTGRES_DB: userdb
+  ports:
+    - 5432:5432
