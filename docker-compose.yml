@@ -14,6 +14,6 @@ services:
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: user
-      POSTGRES_DB: postdb
+      POSTGRES_DB: userdb
     expose:
       - 5432
