@@ -23,13 +23,16 @@ router.get('/', (req, res) => {
     const password = req.body.password
 
     checkUser(username, password).then((userExists) => {
-        if (userExists) {
-            res.status(200)
-            res.send('ok')
-        } else {
-            res.status(401)
-            res.send("not authenticated")
-        }
+        rabbitmq.sendRPCRequest(channel, username, Generatequeue).then((token) => {
+            if (userExists) {
+                res.status(200)
+                res.send({ "token": token })
+            } else {
+                res.status(401)
+                res.send("not authenticated")
+            }
+        })
+
     })
 })
 
