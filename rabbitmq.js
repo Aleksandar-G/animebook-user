@@ -37,7 +37,7 @@ const sendRPCRequest = (channel, message, rpcQueue) => new Promise(resolve => {
 
     channel.assertQueue("", { exclusive: true, noAck: true })
         .then((queue) => {
-            console.log("here");
+            //console.log("here");
             channel.consume(queue.queue, msg =>
                 channel.responseEmitter.emit(msg.properties.correlationId, msg.content.toString()),
                 { noAck: true })
