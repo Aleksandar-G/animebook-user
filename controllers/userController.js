@@ -1,7 +1,52 @@
+
+const bcrypt = require("bcrypt")
 const { User } = require("../models/")
 
-export const createUser = (username, email, password) => {
-    User.create({ username, email, password }).then(() => {
+const saltRounds = 10
+
+const createUser = async (username, email, password) => {
+
+    const salt = await bcrypt.genSalt(saltRounds)
+
+    return bcrypt.hash(password, salt).then((hash) => {
+
+        console.log("hashed: " + hash);
+
+        return User.create({ username: username, email: email, password: hash }).then(() => {
+            return true
+        }).catch((err) => {
+            console.log(err);
+            return false
+        })
+    })
+
+
+}
+
+const checkUser = async (username, password) => {
+
+    const user = await User.findOne({ where: { username: username } })
+
+    if (user === null) return false
+
+    return bcrypt.compare(password, user.password).then((comparePassword) => {
+
+        if (comparePassword) {
+            return true
+        } else {
+            return false
+        }
+    })
+
+
+}
+
+
+const changePassword = async (newPassword) => {
+
+    const hash = await bcrypt.hash(newPassword, saltRounds)
+
+    return User.update({ password: hash }).then(() => {
         return true
     }).catch((err) => {
         console.log(err);
@@ -9,20 +54,16 @@ export const createUser = (username, email, password) => {
     })
 }
 
-export const changePassword = (newPassword) => {
-    User.update({ password: newPassword }).then(() => {
-        return true
-    }).catch((err) => {
-        console.log(err);
-        return false
-    })
-}
-
-export const deleteUser = (username) => {
-    User.destroy({
+const deleteUser = async (username) => {
+    return User.destroy({
         where: {
             username: username
         }
     }
     )
 }
+
+exports.createUser = createUser
+exports.changePassword = changePassword
+exports.deleteUser = deleteUser
+exports.checkUser = checkUser
