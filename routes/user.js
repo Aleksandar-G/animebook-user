@@ -58,7 +58,7 @@ router.delete('/', (req, res) => {
 
     const rpcMessage = { "token": req.headers.authorization, "username": req.body.username }
 
-    rabbitmq.sendRPCRequest(channel, rpcMessage, Generatequeue)
+    rabbitmq.sendRPCRequest(channel, rpcMessage, Verifyqueue)
         .then((verified) => {
 
             if (!verified) {
