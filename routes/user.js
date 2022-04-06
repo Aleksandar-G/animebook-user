@@ -56,7 +56,9 @@ router.post('/', (req, res) => {
 //delete user
 router.delete('/', (req, res) => {
 
-    rabbitmq.sendRPCRequest(channel, req.body.username, Generatequeue)
+    const rpcMessage = { "token": req.headers.authorization, "username": req.body.username }
+
+    rabbitmq.sendRPCRequest(channel, rpcMessage, Generatequeue)
         .then((verified) => {
 
             if (!verified) {
