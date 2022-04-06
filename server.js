@@ -1,6 +1,12 @@
-const express = require('express')
+require('dotenv').config()
+const express = require('express');
+const amqp = require('amqplib/callback_api');
 const { Sequelize } = require('sequelize');
 const userRouter = require("./routes/user")
+const rabbitmq = require("./rabbitmq")
+
+//env variables
+const messageBroker = process.env.MESSAGE_BROKER
 
 //Connect to databse
 const sequelize = new Sequelize('userdb', 'user', 'password', {
@@ -23,3 +29,5 @@ app.listen(3000, () => {
 
 //routers
 app.use('/', userRouter)
+
+
