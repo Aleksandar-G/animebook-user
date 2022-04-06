@@ -55,14 +55,29 @@ router.post('/', (req, res) => {
 
 //delete user
 router.delete('/', (req, res) => {
-    deleteUser(req.body.username).then((deleted) => {
-        if (deleted) {
-            res.status(200)
-            res.send("deleted")
-        } else {
-            res.status(500)
-        }
-    })
+
+    rabbitmq.sendRPCRequest(channel, req.body.username, Generatequeue)
+        .then((verified) => {
+
+            if (!verified) {
+                res.status(401)
+                res.send("not authenticated")
+
+            } else {
+                deleteUser(req.body.username).then((deleted) => {
+                    if (deleted) {
+                        res.status(200)
+                        res.send("deleted")
+                    } else {
+                        res.status(500)
+                    }
+                })
+            }
+
+
+        })
+
+
 })
 
 //change password
