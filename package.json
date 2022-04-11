@@ -5,7 +5,6 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "sequelize": "sequelize",
     "test": "exit 0"
   },
   "author": "",
