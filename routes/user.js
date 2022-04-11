@@ -1,14 +1,10 @@
 const express = require("express")
 const router = express.Router()
-const { createUser, changePassword, deleteUser, checkUser } = require("../controllers/userController")
+const { createUser, changePassword, deleteUser, checkUser } = require("../services/userService")
+const { login, register } = require('../controllers/userController')
 const rabbitmq = require('../rabbitmq')
 
 //connect to rabbitmq
-
-// queues to connect to 
-const Verifyqueue = 'verify_auhtentication_queue'
-const Generatequeue = 'generate_auhtentication_queue'
-
 let channel;
 
 rabbitmq.rabbitMQChannel()
@@ -22,34 +18,33 @@ router.get('/', (req, res) => {
     const username = req.body.username
     const password = req.body.password
 
-    checkUser(username, password).then((userExists) => {
-        rabbitmq.sendRPCRequest(channel, username, Generatequeue).then((token) => {
-            if (userExists) {
-                res.status(200)
-                res.send({ "token": token })
-            } else {
-                res.status(401)
-                res.send("not authenticated")
-            }
-        })
 
+    login(channel, username, password).then((token) => {
+        console.log(token);
+        if (token === null) {
+            res.status(401)
+            res.send("not authenticated")
+        } else {
+            res.send({ token: token })
+        }
     })
+
 })
 
 //register
 router.post('/', (req, res) => {
 
-    createUser(req.body.username, req.body.email, req.body.password).then((created) => {
+    const username = req.body.username
+    const email = req.body.email
+    const password = req.body.password
 
-        rabbitmq.sendRPCRequest(channel, req.body.username, Generatequeue)
-            .then((token) => {
-                if (created && token) {
-                    res.status(201)
-                    res.send({ token: token })
-                } else {
-                    res.status(500)
-                }
-            })
+    register(channel, username, email, password).then((token) => {
+        if (token) {
+            res.status(201)
+            res.send({ token: token })
+        } else {
+            res.status(500)
+        }
     })
 })
 
