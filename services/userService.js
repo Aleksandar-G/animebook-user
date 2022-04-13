@@ -17,8 +17,6 @@ const createUser = async (username, email, password) => {
             return false
         })
     })
-
-
 }
 
 const checkUser = async (username, password) => {
