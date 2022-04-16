@@ -10,7 +10,15 @@ on:
     branches: [ master ]
 
 jobs:
+  setup-config:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: cp ./config/ci_config.json ./config/config.json  
+    
   test:
+  
+    needs: setup-config
 
     runs-on: ubuntu-latest 
     container: node:16-slim
@@ -24,7 +32,9 @@ jobs:
     - run: npm run test
 
   publish-image:
-
+    
+    needs: test
+    
     runs-on: ubuntu-latest 
     permissions:
       contents: read
