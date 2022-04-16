@@ -1,7 +1,5 @@
-const request = require("supertest");
-//const { jest } =require('@jest/globals')
 jest.mock('../services/userService')
-//jest.mock("../models/user")
+
 const userService = require('../services/userService')
 
 
