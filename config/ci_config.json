@@ -1,0 +1,30 @@
+{
+    "development": {
+      "username": "USERNAME",
+      "password": "PASSWORD",
+      "database": "userdb",
+      "host": "HOST",
+      "dialect": "postgres"
+    },
+    "test": {
+      "username": "USERNAME",
+      "password": "PASSWORD",
+      "database": "userdb",
+      "host": "HOST",
+      "dialect": "postgres"
+    },
+    "docker": {
+      "username": "USERNAME",
+      "password": "PASSWORD",
+      "database": "userdb",
+      "host": "HOST",
+      "dialect": "postgres"
+    },
+    "production": {
+      "username": "USERNAME",
+      "password": "PASSWORD",
+      "database": "userdb",
+      "host": "HOST",
+      "dialect": "postgres"
+    }
+  }
