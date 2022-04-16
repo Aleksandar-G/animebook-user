@@ -17,15 +17,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      name: copy over setup file
     - run: cp ./config/ci_config.json ./config/config.json  
+      name: copy over setup file
     - uses: actions/setup-node@v2
       with:
         cache: 'npm'
-      name: install dependencies
     - run: npm ci
-      name: run tests
+      name: install dependencies
     - run: npm run test
+      name: run tests
 
   publish-image:
     
