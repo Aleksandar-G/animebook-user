@@ -11,6 +11,6 @@ const app = express()
 app.use(express.json())
 
 //routers
-app.use('/', userRouter)
+app.use('/user', userRouter)
 
 module.exports = app

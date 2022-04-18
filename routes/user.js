@@ -13,7 +13,7 @@ rabbitmq.rabbitMQChannel()
     })
 
 //login
-router.get('/', (req, res) => {
+router.post('/login', (req, res) => {
 
     const username = req.body.username
     const password = req.body.password
@@ -32,7 +32,7 @@ router.get('/', (req, res) => {
 })
 
 //register
-router.post('/', (req, res) => {
+router.post('/register', (req, res) => {
 
     const username = req.body.username
     const email = req.body.email
@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
 })
 
 //delete user
-router.delete('/', (req, res) => {
+router.delete('/delete', (req, res) => {
 
     const rpcMessage = { "token": req.headers.authorization, "username": req.body.username }
 
@@ -78,7 +78,7 @@ router.delete('/', (req, res) => {
 })
 
 //change password
-router.put('password', (req, res) => {
+router.put('/password', (req, res) => {
     changePassword(req.body.newPassword).then(() => {
         if (passwordChagned) {
             res.status(200)
