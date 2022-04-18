@@ -1,16 +1,18 @@
-require('dotenv').config()
-const express = require('express');
-const { database } = require('./utils/database')
-const userRouter = require("./routes/user")
-
-
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const { database } = require("./utils/database");
+const userRouter = require("./routes/user");
 
 //start server
-const app = express()
+const app = express();
 
-app.use(express.json())
+app.use(express.json());
+
+//enable cors
+app.use(cors());
 
 //routers
-app.use('/user', userRouter)
+app.use("/user", userRouter);
 
-module.exports = app
+module.exports = app;
