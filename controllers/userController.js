@@ -1,37 +1,44 @@
-const { createUser, changePassword, deleteUser, checkUser } = require("../services/userService")
-const rabbitmq = require('../rabbitmq')
-
-// queues to connect to 
-const Verifyqueue = 'verify_auhtentication_queue'
-const Generatequeue = 'generate_auhtentication_queue'
+const {
+  createUser,
+  changePassword,
+  deleteUser,
+  checkUser,
+} = require("../services/userService");
+const rabbitmq = require("../rabbitmq");
 
 const login = (channel, username, password) => {
-    return checkUser(username, password).then(userExists =>
-        rabbitmq.sendRPCRequest(channel, username, Generatequeue).then(token => {
-            if (userExists) {
-                return token
-            } else {
-                return null
-            }
-        })
-    )
-}
+  return checkUser(username, password).then((user) => {
+    if (!user) return null;
+    const rpcMessage = JSON.stringify({
+      username: username,
+      userId: user.id,
+    });
+    return rabbitmq
+      .sendRPCRequest(channel, rpcMessage, rabbitmq.Generatequeue)
+      .then((token) => {
+        if (user) {
+          return token;
+        } else {
+          return null;
+        }
+      });
+  });
+};
 
 const register = (channel, username, email, password) => {
+  return createUser(username, email, password).then((user) => {
+    const rpcMessage = JSON.stringify({ username: username, userId: user.id });
+    return rabbitmq
+      .sendRPCRequest(channel, rpcMessage, rabbitmq.Generatequeue)
+      .then((token) => {
+        if (user && token) {
+          return token;
+        } else {
+          return null;
+        }
+      });
+  });
+};
 
-    return createUser(username, email, password).then(created =>
-        rabbitmq.sendRPCRequest(channel, username, Generatequeue)
-            .then((token) => {
-                if (created && token) {
-                    return token
-                } else {
-                    return null
-                }
-            })
-    )
-}
-
-
-exports.login = login
-exports.register = register
-
+exports.login = login;
+exports.register = register;
