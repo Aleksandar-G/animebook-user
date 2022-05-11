@@ -17,7 +17,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - run: cp ./config/ci_config.json ./config/config.json  
+    - run: cp ./config/ci_config.json ./config/config.js  
       name: copy over setup file
     - uses: actions/setup-node@v2
       with:
