@@ -1,10 +1,23 @@
+require("dotenv").config();
 const bcrypt = require("bcrypt");
+const { Op } = require("sequelize");
 const { User } = require("../models");
 
 const saltRounds = 10;
 
 const createUser = async (username, email, password) => {
+  const userExist = await User.findOne({
+    where: {
+      [Op.or]: [{ username: username }, { email: email }],
+    },
+  });
+  console.log(userExist);
+  if (userExist) {
+    return "email or username exists";
+  }
+
   const salt = await bcrypt.genSalt(saltRounds);
+  //const salt = process.env.SALT;
 
   return bcrypt.hash(password, salt).then((hash) => {
     return User.create({ username: username, email: email, password: hash })
@@ -20,7 +33,6 @@ const createUser = async (username, email, password) => {
 
 const checkUser = async (username, password) => {
   const user = await User.findOne({ where: { username: username } });
-
   if (user === null) return null;
 
   return bcrypt.compare(password, user.password).then((comparePassword) => {

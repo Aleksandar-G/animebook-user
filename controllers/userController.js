@@ -27,6 +27,7 @@ const login = (channel, username, password) => {
 
 const register = (channel, username, email, password) => {
   return createUser(username, email, password).then((user) => {
+    if (user === "email or username exists") return "email or username exists";
     const rpcMessage = JSON.stringify({ username: username, userId: user.id });
     return rabbitmq
       .sendRPCRequest(channel, rpcMessage, rabbitmq.Generatequeue)

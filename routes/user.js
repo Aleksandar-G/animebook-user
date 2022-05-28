@@ -6,6 +6,7 @@ const {
   deleteUser,
   checkUser,
 } = require("../services/userService");
+const { validEmail, validPassword } = require("../utils/validateData");
 const { login, register } = require("../controllers/userController");
 const rabbitmq = require("../rabbitmq");
 
@@ -40,15 +41,29 @@ router.post("/register", (req, res) => {
   const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
-  console.log(req);
+
+  if (!validEmail(email)) {
+    res.status(400);
+    res.send("email is not valid");
+  }
+
+  if (!validPassword(password)) {
+    res.status(400);
+    res.send("password in not valid");
+  }
   register(channel, username, email, password).then((token) => {
     if (token) {
-      res.cookie("token", token);
-      res.status(201);
-      res.send({
-        username: username,
-        token: token,
-      });
+      if (token === "email or username exists") {
+        res.status(400);
+        res.send("email or username exists");
+      } else {
+        res.cookie("token", token);
+        res.status(201);
+        res.send({
+          username: username,
+          token: token,
+        });
+      }
     } else {
       res.status(500);
     }
