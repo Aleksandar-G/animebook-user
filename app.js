@@ -17,6 +17,12 @@ app.use(cors());
 app.use(cookieParser());
 
 //routers
-app.use("/user", userRouter);
+//app.use("/user", userRouter);
+app.use(userRouter);
 
 module.exports = app;
+
+app.get("/health-check", (req, res) => {
+  res.status(200);
+  res.send("ON GOOGLE CLOUD BABY");
+});
