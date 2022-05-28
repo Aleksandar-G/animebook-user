@@ -3,14 +3,14 @@ const amqp = require("amqplib");
 const EventEmitter = require("events");
 
 const messageBroker = process.env.MESSAGE_BROKER;
-
+console.log(messageBroker);
 // queues to connect to
 const Verifyqueue = "verify_auhtentication_queue";
 const Generatequeue = "generate_auhtentication_queue";
 
 const rabbitMQChannel = async () =>
   amqp
-    .connect(`amqp://${messageBroker}`)
+    .connect(`${messageBroker}`)
     .then((connection) => connection.createChannel())
     .then((channel) => {
       channel.assertQueue(Verifyqueue, {
