@@ -86,17 +86,12 @@ jobs:
         username: ${{ secrets.DOCKER_USER }}
         password: ${{ secrets.DOCKER_TOKEN }}
         
-    - name: Docker Metadata action
-      uses: docker/metadata-action@v4.0.1
-      with:
-        images: agalex/animebook-user
-        
-        # Bulnd and push Image to docker hub
+      # Build and push Image to docker hub
     - name: Build and push Docker images
       uses: docker/build-push-action@v3.0.0
       with:
           push: true
-          tags: latest
+          tags: ${{ secrets.DOCKER_USER }}/animebook-user:ci
 
     # Setup gcloud CLI
     - uses: google-github-actions/setup-gcloud@94337306dda8180d967a56932ceb4ddcf01edae7
