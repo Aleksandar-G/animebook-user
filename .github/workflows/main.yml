@@ -9,6 +9,13 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: autopilot-cluster-animebook    # Add your cluster name here.
+  GKE_ZONE: europe-west4   # Add your cluster zone here.
+  DEPLOYMENT_NAME: gke-test # Add your deployment name here.
+  IMAGE: static-site
+
 jobs:
   test:
 
@@ -63,3 +70,42 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    #environment: production
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Log in to the Container registry
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+        
+      # Build and push Image to docker hub
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v3.0.0
+      with:
+          push: true
+          tags: ${{ secrets.DOCKER_USER }}/animebook-user:ci
+
+    # Setup gcloud CLI
+    - uses: google-github-actions/setup-gcloud@94337306dda8180d967a56932ceb4ddcf01edae7
+      with:
+        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        project_id: ${{ secrets.GKE_PROJECT }}
+
+    # Configure Docker to use the gcloud command-line tool as a credential
+    # helper for authentication
+    - run: |-
+        gcloud --quiet auth configure-docker
+        
+
+    # Deploy the Docker image to the GKE cluster
+    - name: Deploy
+      run: |-
+        kubectl apply -f animebook-user.yaml
