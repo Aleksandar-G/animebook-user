@@ -106,8 +106,7 @@ jobs:
     - run: |-
         gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
         
-
-    # Deploy the Docker image to the GKE cluster
+    # Deploy sample image to the GKE cluster
     - name: Deploy
       run: |-
-        ./kustomize build . | kubectl apply -f -
+        kubectl apply -f deployment.yml
