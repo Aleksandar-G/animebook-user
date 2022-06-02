@@ -108,4 +108,4 @@ jobs:
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
       run: |-
-        kubectl apply -f animebook-user.yaml
+        ./kustomize build . | kubectl apply -f -

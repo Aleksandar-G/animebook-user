@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: animebook-user-deployment
+  labels:
+    app: animebook-user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: animebook-user
+  template:
+    metadata:
+      labels:
+        app: animebook-user
+    spec:
+      containers:
+        - name: animebook-user
+          image: agalex/animebook-user:latest
+          ports:
+            - containerPort: 3000
+          command: ["/bin/sh"]
+          args: ["-c", "npx sequelize-cli db:migrate && node server.js"]
+          readinessProbe:
+            httpGet:
+              port: 3000
+              path: /health-check
+            initialDelaySeconds: 1
+            periodSeconds: 5
+            timeoutSeconds: 4
+            successThreshold: 2
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"
+          env:
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: user-db-secret
+                  key: user
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-db-secret
+                  key: password
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: user-db-config
+                  key: user-db-url
+            - name: MESSAGE_BROKER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: connection
+            - name: SALT
+              valueFrom:
+                secretKeyRef:
+                  name: animebook-user-secret
+                  key: salt
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: animebook-user-service
+spec:
+  selector:
+    app: animebook-user
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
