@@ -35,6 +35,7 @@ jobs:
       name: run tests
 
   publish-image-to-github-registry:
+    name: Publish image to github registry
     
     needs: test
     
