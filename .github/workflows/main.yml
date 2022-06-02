@@ -34,7 +34,7 @@ jobs:
     - run: npm run test
       name: run tests
 
-  publish-image:
+  publish-image-to-github-registry:
     
     needs: test
     
