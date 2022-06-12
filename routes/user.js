@@ -72,26 +72,29 @@ router.post("/register", (req, res) => {
 
 //delete user
 router.delete("/delete", (req, res) => {
-  const rpcMessage = {
-    token: req.headers.authorization,
-    username: req.body.username,
-  };
+  const rpcMessage = req.headers.authorization;
 
-  rabbitmq.sendRPCRequest(channel, rpcMessage, Verifyqueue).then((verified) => {
-    if (!verified) {
-      res.status(401);
-      res.send("not authenticated");
-    } else {
-      deleteUser(req.body.username).then((deleted) => {
-        if (deleted) {
-          res.status(200);
-          res.send("deleted");
-        } else {
-          res.status(500);
-        }
-      });
-    }
-  });
+  const startTimeVerifyJWT = Date.now();
+  rabbitmq
+    .sendRPCRequest(channel, rpcMessage, rabbitmq.Verifyqueue)
+    .then((verified) => {
+      console.log(Date.now() - startTimeVerifyJWT);
+      // if (!verified) {
+      //   res.status(401);
+      //   res.send("not authenticated");
+      // } else {
+      //   deleteUser(req.body.username).then((deleted) => {
+      //     if (deleted) {
+      //       res.status(200);
+      //       res.send("deleted");
+      //     } else {
+      //       res.status(500);
+      //     }
+      //   });
+      // }
+    });
+
+  res.sendStatus(200);
 });
 
 //change password
