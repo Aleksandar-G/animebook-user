@@ -1,6 +1,7 @@
 require("dotenv").config();
 const amqp = require("amqplib");
 const EventEmitter = require("events");
+const crypto = require("crypto");
 
 const messageBroker = process.env.MESSAGE_BROKER;
 console.log(messageBroker);
